@@ -1,0 +1,141 @@
+type SocialDexDeployer_OwnershipTransferred @entity {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+  timestamp: BigInt!
+  txHash: String!
+  blockNumber: BigInt!
+  previousOwnerTokens: [SocialDexDeployer_TokenCreated!]! @derivedFrom(field: "deployer")
+  newOwnerTokens: [SocialDexDeployer_TokenCreated!]! @derivedFrom(field: "deployer")
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+}
+
+type SocialDexDeployer_TokenCreated @entity {
+  id: ID!
+  tokenAddress: String!
+  lpNftId: BigInt!
+  deployer: String!
+  name: String!
+  symbol: String!
+  supply: BigInt!
+  _supply: BigInt!
+  lockerAddress: String!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  holders: [TokenHolder!]! @derivedFrom(field: "token")
+  transfers: [Transfer!]! @derivedFrom(field: "token")
+  price: [PriceTracking!]! @derivedFrom(field: "token")
+  liquidityEvents: [LiquidityEvent!]! @derivedFrom(field: "token")
+  tradingVolume: [DailyVolume!]! @derivedFrom(field: "token")
+  marketStats: TokenMarketStats!
+  socialMetrics: SocialMetrics!
+  tokenPairs: [TokenPair!]! @derivedFrom(field: "token0")
+}
+
+type TokenHolder @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  address: String!
+  balance: BigInt!
+  updatedAt: BigInt!
+  percentageOwned: BigDecimal!
+  averageAcquisitionPrice: BigDecimal!
+  transactions: [Transfer!]! @derivedFrom(field: "from")
+  liquidityProvided: [LiquidityEvent!]! @derivedFrom(field: "provider")
+}
+
+type Transfer @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  from: String!
+  to: String!
+  amount: BigInt!
+  timestamp: BigInt!
+  txHash: String!
+  blockNumber: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  priceAtTime: BigDecimal!
+}
+
+type PriceTracking @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  price: BigDecimal!
+  timestamp: BigInt!
+  volume24h: BigDecimal!
+  high24h: BigDecimal!
+  low24h: BigDecimal!
+  priceChange24h: BigDecimal!
+  liquidityUSD: BigDecimal!
+}
+
+type LiquidityEvent @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  provider: TokenHolder!
+  type: LiquidityEventType!
+  amount: BigInt!
+  timestamp: BigInt!
+  txHash: String!
+}
+
+type DailyVolume @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  date: String!
+  volume: BigDecimal!
+  transactions: Int!
+  uniqueTraders: Int!
+}
+
+type TokenMarketStats @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  marketCap: BigDecimal!
+  fullyDilutedValuation: BigDecimal!
+  circulatingSupply: BigInt!
+  totalHolders: Int!
+  averageHoldTime: BigInt!
+  burnedTokens: BigInt!
+}
+
+type SocialMetrics @entity {
+  id: ID!
+  token: SocialDexDeployer_TokenCreated!
+  twitterFollowers: Int!
+  telegramMembers: Int!
+  discordMembers: Int!
+  websiteVisits: Int!
+  socialScore: Int!
+  updatedAt: BigInt!
+}
+
+type TokenPair @entity {
+  id: ID!
+  token0: SocialDexDeployer_TokenCreated!
+  token1: SocialDexDeployer_TokenCreated!
+  pairAddress: String!
+  totalLiquidity: BigDecimal!
+  volume24h: BigDecimal!
+  createdAt: BigInt!
+}
+
+enum LiquidityEventType {
+  ADD
+  REMOVE
+  LOCK
+  UNLOCK
+}
+
+type DeployerStats @entity {
+  id: ID!
+  address: String!
+  tokensCreated: Int!
+  totalValueLocked: BigDecimal!
+  successfulProjects: Int!
+  activeHolders: Int!
+  reputation: Int!
+  lastActiveTimestamp: BigInt!
+}

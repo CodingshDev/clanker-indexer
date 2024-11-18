@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: envio-indexer
+networks:
+- id: 8453
+  start_block: 0
+  contracts:
+  - name: SocialDexDeployer
+    address:
+    - 0x250c9FB2b411B48273f69879007803790A6AeA47
+    handler: src/EventHandlers.ts
+    events:
+    - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+    - event: TokenCreated(address tokenAddress, uint256 lpNftId, address deployer, string name, string symbol, uint256 supply, uint256 _supply, address lockerAddress)
+rollback_on_reorg: false
